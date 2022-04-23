@@ -17,27 +17,23 @@ public class QuerySet {
         this.pstmt = pstmt;
     }
 
-    public QuerySet setStringParameter(List<String> parameter) {
-        int listIndex = 0;
-        int index = this.index;
-        for (; this.index < index + parameter.size(); this.index++) {
+    public QuerySet setStringParameter(String... parameter) {
+        for (String param : parameter) {
             try {
-                pstmt.setString(this.index, parameter.get(listIndex++));
+                pstmt.setString(this.index++, param);
             } catch (SQLException e) {
-                throw new IllegalStateException(e);
+                e.printStackTrace();
             }
         }
         return this;
     }
 
-    public QuerySet setIntegerParameter(List<Integer> parameter) {
-        int listIndex = 0;
-        int index = this.index;
-        for (; this.index < index + parameter.size(); this.index++) {
+    public QuerySet setIntegerParameter(int... parameter) {
+        for (int param : parameter) {
             try {
-                pstmt.setInt(this.index, parameter.get(listIndex++));
+                pstmt.setInt(this.index++, param);
             } catch (SQLException e) {
-                throw new IllegalStateException(e);
+                e.printStackTrace();
             }
         }
         return this;
@@ -49,8 +45,6 @@ public class QuerySet {
             rs = pstmt.executeQuery();
         } catch (SQLException e) {
             throw new IllegalStateException(e);
-        } finally {
-            JDBCUtil.close(con, pstmt, rs);
         }
         return rs;
     }
@@ -62,7 +56,12 @@ public class QuerySet {
         } catch (SQLException e) {
             throw new IllegalStateException(e);
         } finally{
-            JDBCUtil.close(con, pstmt, null);
+            close(null);
         }
+    }
+
+    public void close(ResultSet rs) {
+        System.out.println("close success");
+        JDBCUtil.close(con, pstmt, rs);
     }
 }
